@@ -19,26 +19,6 @@ A Parrot OS–themed web app for auditing password strength and checking for bre
 
 ---
 
-## 📦 Project Structure
-
-```
-parrot-terminal-password-auditor/
-│
-├── src/
-│   ├── static/
-│   │   ├── peakpx.jpg           # Parrot OS wallpaper
-│   │   └── terminal.png         # Terminal icon
-│   ├── templates/
-│   │   └── index.html           # Main web UI
-│   ├── webapp.py                # Flask app
-│   ├── password_strength.py     # Password evaluation logic
-│   ├── entropy_calculator.py    # Entropy calculation
-│   ├── hibp_checker.py          # HIBP API check
-│   └── ... (other files)
-└── venv/                        # Python virtual environment
-```
-
----
 
 ## ⚡ Quick Start
 
@@ -118,5 +98,5 @@ Open an issue or submit a PR.
 
 ## 💡 Author
 
-- [Your Name](https://github.com/QuantumRobot243)
+- [Neo_X](https://github.com/QuantumRobot243)
 
