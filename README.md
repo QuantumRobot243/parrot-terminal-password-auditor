@@ -23,6 +23,7 @@ A Parrot OS–themed web app for auditing password strength and checking for bre
 ### 1. **Clone the repo**
 
 bash
+
 git clone https://github.com/yourusername/parrot-terminal-password-auditor.git
 cd parrot-terminal-password-auditor/src
 ```
