@@ -23,8 +23,9 @@ A Parrot OS–themed web app for auditing password strength and checking for bre
 ### 1. **Clone the repo**
 
 bash
-
+```
 git clone https://github.com/yourusername/parrot-terminal-password-auditor.git
+```
 ```
 cd parrot-terminal-password-auditor/src
 ```
@@ -32,11 +33,11 @@ cd parrot-terminal-password-auditor/src
 ### 2. **Set up a virtual environment**
 
 bash
-python -m venv venv
+```python -m venv venv```
 # On Windows:
-venv\Scripts\activate
+```venv\Scripts\activate```
 # On Mac/Linux:
-source venv/bin/activate
+```source venv/bin/activate```
 
 
 ### 3. **Install dependencies**
