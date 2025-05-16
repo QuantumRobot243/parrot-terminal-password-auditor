@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parrot OS Web Desktop</title>
+    <style>
+        body {
+            background: #23272e url('/static/peakpx.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0e0e0;
+            font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .desktop-icon {
+            position: fixed;
+            left: 40px;
+            bottom: 40px;
+            z-index: 10;
+            text-align: center;
+            cursor: pointer;
+            width: 70px;
+        }
+        .desktop-icon img {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 0 8px #000a);
+            transition: transform 0.2s;
+        }
+        .desktop-icon img:hover {
+            transform: scale(1.1);
+        }
+        .desktop-icon-label {
+            color: #e0e0e0;
+            font-size: 0.95em;
+            margin-top: 4px;
+            text-shadow: 0 0 4px #000a;
+        }
+        .terminal-window {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            background: rgba(0,0,0,0.98);
+            border-radius: 6px;
+            box-shadow: 0 0 24px #000c;
+            width: 800px;
+            height: 420px;
+            margin: 0;
+            padding: 0 0 24px 0;
+            border: 2px solid #222;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        .terminal-window.visible {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        .terminal-header {
+            background: #181a20;
+            border-radius: 6px 6px 0 0;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            min-height: 32px;
+        }
+        .terminal-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .btn-close { background: #ff5f56; border: 1px solid #e0443e; cursor: pointer;}
+        .btn-min { background: #ffbd2e; border: 1px solid #dea123; }
+        .btn-max { background: #27c93f; border: 1px solid #13a10e; }
+        .terminal-title {
+            margin-left: 16px;
+            color: #1de9b6;
+            font-size: 1em;
+            letter-spacing: 1px;
+        }
+        .terminal-body {
+            flex: 1;
+            padding: 24px 32px 0 32px;
+            overflow-y: auto;
+        }
+        .prompt {
+            color: #1de9b6;
+        }
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1em;
+        }
+        .input-line input[type="password"] {
+            background: transparent;
+            color: #e0e0e0;
+            border: none;
+            border-bottom: 1px solid #444;
+            font-size: 1em;
+            font-family: inherit;
+            outline: none;
+            margin-left: 8px;
+            width: 220px;
+        }
+        .input-line button {
+            background: #181a20;
+            color: #1de9b6;
+            border: 1px solid #1de9b6;
+            border-radius: 4px;
+            padding: 4px 12px;
+            font-size: 1em;
+            font-family: inherit;
+            cursor: pointer;
+            margin-left: 12px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .input-line button:hover {
+            background: #1de9b6;
+            color: #181a20;
+        }
+        .result {
+            margin-top: 16px;
+            font-size: 1.1em;
+            font-family: inherit;
+            white-space: pre-line;
+        }
+        .weak {
+            color: #ff5555;
+        }
+        .compromised {
+            color: #ff5555;
+            font-weight: bold;
+            animation: blink 1s step-end infinite alternate;
+            text-shadow: 0 0 8px #ff555588;
+        }
+        .vulnerable {
+            color: #f1fa8c;
+        }
+        .acceptable {
+            color: #1de9b6;
+        }
+        .secure {
+            color: #00bfff;
+            font-weight: bold;
+            text-shadow: 0 0 8px #00bfff88;
+        }
+        @keyframes blink {
+            50% { opacity: 0.2; }
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: #e0e0e0;
+            margin-left: 2px;
+            animation: blink-cursor 1s steps(1) infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink-cursor {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        @media (max-width: 900px) {
+            .terminal-window {
+                width: 98vw;
+                height: 70vh;
+                min-width: 0;
+                min-height: 0;
+            }
+        }
+    </style>
+</head>
+<body data-show-terminal="{% if result %}1{% else %}0{% endif %}">
+    <!-- Desktop terminal icon -->
+    <div class="desktop-icon" id="desktopIcon">
+        <img src="/static/terminal.png" alt="Terminal" title="Open Terminal">
+        <div class="desktop-icon-label">Terminal</div>
+    </div>
+    <!-- Terminal window -->
+    <div class="terminal-window" id="terminalWindow">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <span class="terminal-btn btn-close" id="closeBtn"></span>
+                <span class="terminal-btn btn-min"></span>
+                <span class="terminal-btn btn-max"></span>
+            </div>
+            <span class="terminal-title">user@parrot: ~</span>
+        </div>
+        <div class="terminal-body">
+            <form method="post" autocomplete="off">
+                <div class="input-line">
+                    <span class="prompt">user@parrot:~$</span>
+                    <input type="password" name="password" placeholder="Enter password" required autofocus>
+                    <button type="submit">Enter</button>
+                </div>
+            </form>
+            {% if result %}
+                <!-- Hidden div to hold the HTML result -->
+                <div style="display:none" id="result-raw">{{ result|safe }}</div>
+                <div class="result">
+                    <span class="prompt">user@parrot:~$</span><br>
+                    <span id="typewriter"></span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+    // Show terminal on icon click
+    document.getElementById('desktopIcon').onclick = function() {
+        document.getElementById('terminalWindow').classList.add('visible');
+    };
+    // Hide terminal on close button click
+    document.getElementById('closeBtn').onclick = function() {
+        document.getElementById('terminalWindow').classList.remove('visible');
+    };
+
+    // Typewriter effect that works with HTML tags
+    function typeWriterEffect(html, elementId, delay=30) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = '';
+        // Create a temporary element to parse the HTML
+        const temp = document.createElement('div');
+        temp.innerHTML = html.trim();
+        // Find the first span (with class)
+        const span = temp.querySelector('span');
+        if (span) {
+            const text = span.textContent;
+            const className = span.className;
+            let i = 0;
+            function type() {
+                if (i <= text.length) {
+                    el.innerHTML = `<span class="${className}">${text.slice(0, i)}</span>`;
+                    i++;
+                    setTimeout(type, delay);
+                }
+            }
+            type();
+        } else {
+            // Fallback: just type the plain text
+            let i = 0;
+            function type() {
+                if (i <= html.length) {
+                    el.textContent = html.slice(0, i);
+                    i++;
+                    setTimeout(type, delay);
+                }
+            }
+            type();
+        }
+    }
+
+    window.onload = function() {
+        // If result exists, show terminal automatically
+        if (document.body.getAttribute('data-show-terminal') === "1") {
+            document.getElementById('terminalWindow').classList.add('visible');
+        }
+        const resultRaw = document.getElementById('result-raw');
+        if (resultRaw) {
+            typeWriterEffect(resultRaw.innerHTML, 'typewriter', 20);
+        }
+    };
+    </script>
+</body>
+</html>
