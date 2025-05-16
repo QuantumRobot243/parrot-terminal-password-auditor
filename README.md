@@ -1,6 +1,4 @@
 
-
-```markdown
 # Parrot Terminal Password Auditor
 
 A Parrot OS–themed web app for auditing password strength and checking for breaches, featuring a desktop-style wallpaper, a clickable terminal icon, and a realistic terminal window with a typewriter effect.
