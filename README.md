@@ -44,20 +44,20 @@ parrot-terminal-password-auditor/
 
 ### 1. **Clone the repo**
 
-```bash
+bash
 git clone https://github.com/yourusername/parrot-terminal-password-auditor.git
 cd parrot-terminal-password-auditor/src
 ```
 
 ### 2. **Set up a virtual environment**
 
-```bash
+bash
 python -m venv venv
 # On Windows:
 venv\Scripts\activate
 # On Mac/Linux:
 source venv/bin/activate
-```
+
 
 ### 3. **Install dependencies**
 
